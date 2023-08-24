@@ -1,0 +1,71 @@
+\\ notes for chapter 4
+
+Spend time thinking about fn names. They should be intuittive enough that when a stranger reads them, they understand what it does without looking at implementation. This really helps with readability of overall program
+
+fn parameters and other variables are created(memory allocated) by the system only when the fn is called, no where they're defined in the code
+
+terminology - 'parameters' in the fn definition & 'arguments' in the fn call, so arguments initialize parameters with values. Arguments can be variables or expressions (sum/count)
+
+Arguments are usually named the same as fn parameters. However, when the fn is executed, the system creates copies - parameters are copies of arguments. this is called call-by-value. updating parameter does not affect the argument located outside the fn
+
+when naming parameters & variables in a fn, factor in the context that users might be coming from. For ex, professors might access a median fn to calc hw grades, students might use it for their hw, dog expert could use it to find median height of certain dog breed from sample. No point calling variables specific to a certain case like 'hw'. In this case, keep generic. If sure about users, then you can be specific
+
+if there's a section of code that you know can potentially cause problems for whatever reason (bad user i/p, logic etc), the best way to handle it is by throwing an 'exception'. more on this below. An example of an exception is 'domain_error'. It is defined in the std lib and is used when the input values for some computation (fn, calculation etc) is outside the acceptable range of values aka acceptable domain. the string passed with the domain exception is printed in the console, so users know what the issue is.
+
+	eg: if (a < 0) throw domain_error("Value entered is -ve. Cannot accept");
+
+Instead of parameters copying the value of their arguments (call-by-value), the arguments can be directly accessed within the fn using a 'reference' (&). These references are nothing but synonyms of the object they refer to. Making any changes to the reference is synonmous to making changes to the obj they refer to.
+
+	eg: double grade(double final, double midterm, vector<double>& hw)
+	{
+		statements...
+	}
+
+	grade(80,50, homework);
+
+Usually using a reference as a parameter in a fn is an indication that the parameter/object referred to is going to be updated. There are instances when the object contains a value we want to use but not update. In that case, we make the reference a 'const'. Doing so makes it impossible for the value to get updated (unintentionally). Using references also avoids the overhead of creating a copy, which for data structures like vectors that can get massive could be be significant.
+
+	eg. double grade(double final, double midterm, const vector<double>& hw)
+	{
+		statements...
+	}
+
+In cpp it is stupid to create a reference to a reference. If implemented, it is the same as creating a reference to the original obj. This redundancy is why no one does this.
+
+We can have const references to const & non const objects but cannot have non const refs to const obj. The idea being if the obj is defined as a const, the designer intends to lock that value and prevent it from being changed. If the ref to this const obj is not a const, it is implied that the ref is going to be used to update the obj it is referring to. As that would be illegal on account of the main obj being a const, the compiler throws an error.
+
+	It is however okay to have const references to const & non const objs. If the main obj is a const, using a const reference to it is the only way to do so based on the logic above. using a const ref to a non const obj works as well as the main obj can be updated and using a const ref does not violate that at all.
+
+fn overloading - multiple functions can have the same name as long as there is some difference in their parameters - either the number, type or order of their parameters are unique
+
+fns can only return 1 value. Situations arise where more than 1 value needs to be updated within the fn. This is a great use case to use references.
+
+only arguments that are lvalues can be passed to fns that have non const references as parameters
+
+EOF is a state, not a character. When system reaches end of file, the stream(cin here) gets put into a failure state(eofbit, badbit or failbit are set). The same thing happens when wrong type is encountered by cin when reading from a stream. So in both cases the condition if(cin >> x_some_type) will fail.
+
+return by reference - when a parameter is a reference in a fns, the argument is not copied. Similarly when you return by reference, the value being returned is not copied. So for ex, you can return a stream/vector (any data type that is potentially large) without the overhead of copying all the values in it when returning. There are also other cool things you can do like passing values to a fn in this form - foo(x, i) = 4;(for more info on this - https://www.youtube.com/watch?v=b6CcsmUD4JE)
+
+try-catch blocks - I think try-catch blocks provide a way to elegantly handle errors in sections of code. The errors could be mistakes in user input, logical (these are only 2 i can think of) etc... So the idea is - if you suspect a section of code could generate errors, throw it in a try-catch block
+
+	syntax: try
+			{
+			} catch(exception obj)
+			{
+			}
+	here the exception obj is an argument you can pass to the catch block
+
+	fyi - when c++ encounters an issue when executing code, it generates/throws an error. The technical way to say this is 'c++ throws an exception'
+
+	If at any point an exception is thrown within the try block, the remaining code within the try block is skipped and execution is immediately passed to the catch block. If no exception occours, the catch block is skipped
+
+There is weird concept in c++ called 'order of evaluation'. Execution of statements always happens sequentially but within a statement/expression, operands can be evaluated in any order
+
+	eg. a + b() + c - we generally evaluate the first a then add B() to it and then c to that result. But that isn't the case. b() or c could be evaluated first, then combined in the right logical order so that the result is correct. remember a, b & c could be more complex sub-expressions. c++ does not guarantee the order of evaluation
+
+	This apparently used to be the case with chained statements using the i/p o/p operators (<< >>). eg. cout << "The name is: " << name(); - name() could be evaluated first before the next "The name is: ". The result would then have been printed in the right order. But with C++ 17, evaluation of operands for <</>> also now happens from L-R
+
+A good rule of thumb is for every statement to have only 1 side effect at the most (throwing exception counts as side effect)
+
+A structure is a user defined type that can be considered as a grouping of different data types (called data members) in one container. Very similar if not the same as objects of a class
+

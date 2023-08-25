@@ -69,3 +69,16 @@ A good rule of thumb is for every statement to have only 1 side effect at the mo
 
 A structure is a user defined type that can be considered as a grouping of different data types (called data members) in one container. Very similar if not the same as objects of a class
 
+HEADER FILES:
+
+cpp supports the idea of separate compilation - programs can be separated into individual files and each can be compiled separately
+
+When a compiler sees a user defined header file in a program, it copies over the entire content of the header file and adds that code in place of the header file
+
+header files contain function declarations (no need for params) along with any other 'fully qualified' (no 'using std::...') declarations. The reason being these header files represent blocks of independent functionality. So if you for ex add the entire algorithm std header when you're only using the sort function, a lot of unnecessary code gets added to the main program through this header file. For very large programs with a lot of header files, this can add up and affect compilation time.
+
+The '#ifndef (if not defined) - #endif' are directives that uses a preprocessor variable to prevent code in a header file from being defined multiple times in a program. The first time the compiler comes across the header file, the var_name in '#ifndef var_name' will not be defined so the compiler will look at the rest of the header file. Any subsequent additions of the header file will result in the compiler skipping over it as the var_name is already defined
+
+	Always write #ifndef in first line even above any comments
+
+

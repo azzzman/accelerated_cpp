@@ -22,8 +22,8 @@ double median(vector<double> hw)
 	if(size == 0)
 		throw domain_error("Cannot calculate median of an empty vector\n");
 
-	sort(hw.begin(), hw.end);
+	sort(hw.begin(), hw.end());
 	sz mid = size/2;
 
-	return size%2 = 0 ? (hw[mid] + hw[mid-1])/2 : hw[mid];
+	return size%2 == 0 ? (hw[mid] + hw[mid-1])/2 : hw[mid];
 }
